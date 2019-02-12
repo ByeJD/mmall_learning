@@ -24,6 +24,35 @@
     from mmall_user
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="checkUserName" resultType="int" parameterType="string">
+    select count(1) from mmall_user
+    where username = #{userName}
+  </select>
+  <select id="selectLogin" resultType="com.mmall.pojo.User" parameterType="map">
+    select
+    <include refid="Base_Column_List" />
+    from mmall_user
+    where username=#{userName} and password=#{password}
+  </select>
+  <select id="checkEmail" resultType="int" parameterType="string">
+    select count(1) from mmall_user where email=#{email}
+  </select>
+
+  <select id="selectQuestionByUserName" parameterType="string" resultType="string">
+    select question from mmall_user where username = #{userName}
+  </select>
+  <select id="checkAnser" resultType="int" parameterType="map">
+    select count(1) from mmall_user where username=#{username} and question=#{question} and answer = #{answer}
+  </select>
+  <select id="updatePasswordByUserName" resultType="int" parameterType="map">
+    update mmall_user set password=#{md5EncodeUtf8} where username = #{userName}
+  </select>
+  <select id="checkPassword" resultType="int" parameterType="map">
+    select count(1) from mmall_user where username = #{userName} and id = #{id}
+  </select>
+  <select id="checkEmailByUserId" resultType="int" parameterType="map">
+    select count(1) from mmall_user where id != #{id} and email=#{email}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from mmall_user
     where id = #{id,jdbcType=INTEGER}
@@ -129,11 +158,8 @@
       <if test="role != null">
         role = #{role,jdbcType=INTEGER},
       </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = now(),
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -147,7 +173,7 @@
       question = #{question,jdbcType=VARCHAR},
       answer = #{answer,jdbcType=VARCHAR},
       role = #{role,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
